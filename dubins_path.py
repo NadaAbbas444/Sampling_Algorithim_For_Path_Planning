@@ -296,7 +296,7 @@ def calc_dubins_path(sx, sy, syaw, gx, gy, gyaw, curv, step_size=0.1):
     return PATH(lengths, mode, x_list, y_list, yaw_list)
 
 
-def dupin_smooth(states,max_c):
+def dupin_smooth(states,max_c,map):
     path_x, path_y, yaw = [], [], []
     smooth_path=[]
     for i in range(len(states) - 1):
@@ -316,9 +316,6 @@ def dupin_smooth(states,max_c):
     # animation
     plt.ion()
     plt.figure(1)
-
-    map_matrix = np.array(np.loadtxt("maps/np_map2_dilated.txt"))
-    map_matrix= np.array(map_matrix)
     for i in range(len(path_x)):
         plt.clf()
         plt.plot(path_x, path_y, linewidth=1, color='gray')
@@ -328,10 +325,10 @@ def dupin_smooth(states,max_c):
 
         draw.Car(path_x[i], path_y[i], yaw[i], 1.5, 3)
         
-        plt.imshow(np.rot90(np.fliplr(map_matrix)), cmap='gray')  
+        plt.imshow(np.rot90(np.fliplr(map)), cmap='gray')  
         plt.axis("equal")
         plt.title(" Dubins Path")
-        plt.axis([0, 150, 0, 150])
+        plt.axis([0, map.shape[0], 0, map.shape[1]])
         plt.draw()
         plt.pause(0.001)
 

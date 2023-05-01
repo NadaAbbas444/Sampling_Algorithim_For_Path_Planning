@@ -104,7 +104,7 @@ class FMT:
         path_y = np.array(path_y)
         plt.imshow(np.rot90(np.fliplr(self.map)), cmap='gray')  
         plt.plot(path_x, path_y, '-o', color='orange')
-        plt.title('FMT')
+        plt.title('FMT_Algorithim')
         plt.xlabel('X')
         plt.ylabel('Y')
         plt.show()

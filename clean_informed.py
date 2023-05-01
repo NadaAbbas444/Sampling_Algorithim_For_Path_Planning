@@ -101,8 +101,7 @@ class IRrtStar:
       plt.plot(path_x, path_y, color='red')
       plt.show()
       return path_x, path_y
-
-
+    
     def Steer(self, x_start, x_goal):
         dist, theta = self.get_distance_and_angle(x_start, x_goal)
         dist = min(self.step_len, dist)
