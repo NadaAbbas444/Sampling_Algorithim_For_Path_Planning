@@ -1,4 +1,4 @@
-#@ Fast Marching Trees(FMT)
+## Fast Marching Trees(FMT)
 
 Parameters
 
