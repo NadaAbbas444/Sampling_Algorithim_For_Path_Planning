@@ -1,6 +1,6 @@
 ﻿## Fast Marching Trees(FMT)
 
-Parameters
+Parameters:
 
 - Research radius : The formula mathsqrt((math.log(n)˙ / n)) is a way to achieve this shrinking radius, where the math.log(n) / n term goes to zero as n (nu.of.samples) grows large, effectively reducing the radius.
 - Number of samples
