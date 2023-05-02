@@ -17,10 +17,10 @@ Step (2): Finding minimum cost path:
 
 - updates the open and closed sets, removes the current point, z, from the V~~ open set, and adds it to the V~~ closed set. adds the current point to the visited nodes set. If the V~~ open set becomes empty, the algorithm terminates. Otherwise, it selects the point in V~~ open with the lowest cost as the new current point, z.
 
-![](<img src="results/FMT_algorithim_Breakdown.png" alt="testing" height="400" width="400">)
+<img src="results/FMT_algorithim_Breakdown.png" alt="testing" height="400" width="500">
 
-![](<img src="results/FMT_100r_120s_img.png" alt="testing" height="400" width="400">)
+<img src="results/FMT_100r_120s_img.png" alt="testing" height="400" width="400">
 
-![](<img src="results/FMT_400r_100s.png" alt="testing" height="400" width="400">)
+<img src="results/FMT_400r_100s.png" alt="testing" height="400" width="400">
 
 Figure 1: FMT results of map0 and map1
