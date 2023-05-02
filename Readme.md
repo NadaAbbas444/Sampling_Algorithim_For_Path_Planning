@@ -24,3 +24,22 @@ Step (2): Finding minimum cost path:
 <img src="results/FMT_400r_100s.png" alt="testing" height="400" width="400">
 
 Figure 1: FMT results of map0 and map1
+
+## Batch Informed Trees(BIT)
+
+Algorithm Breakdown
+
+Batch Informed Trees (BIT\*) is an extension of the Informed RRT\* algorithm. Like Informed RRT\*, it constructs a tree of paths from the start to the goal, but instead of growing the tree incrementally, it performs a batch of expansions at each iteration It divide the search space into a number of overlapping regions and using a separate tree to explore each region. At each iteration, it selects the best tree and expands it by adding a new node to the tree. The goal is to find the optimal path to the goal by iteratively refining the search space.
+
+BIT\* uses a number of heuristics to guide its search, including the distance to the goal, the cost of the path so far, and the cost of the best path found so far. It also uses a technique called lazy collision checking, which avoids costly collision checks until it is absolutely necessary.
+
+The algorithm can be summarized as follows:
+
+- Divide the search space into a number of overlapping regions.
+- Initialize a tree in each region with the start node.
+- Expand all trees in parallel until the goal is reached.
+- Find the cheapest path to the goal from all trees and connect them. Repeat steps 3 and 4 until convergence.
+
+<img src="results/BIT_eta200_itermax_1500_map2.png" alt="testing" height="400" width="400">
+
+<img src="results/BIT_eta200_itermax_1500_map0.png" alt="testing" height="400" width="400">
