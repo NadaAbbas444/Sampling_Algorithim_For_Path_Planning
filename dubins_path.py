@@ -277,7 +277,7 @@ def planning_from_origin(gx, gy, gyaw, curv, step_size):
     return x_list, y_list, yaw_list, best_mode, best_cost
 
 
-def calc_dubins_path(sx, sy, syaw, gx, gy, gyaw, curv, step_size=0.1):
+def calc_dubins_path(sx, sy, syaw, gx, gy, gyaw, curv, step_size=0.3):
     gx = gx - sx
     gy = gy - sy
 

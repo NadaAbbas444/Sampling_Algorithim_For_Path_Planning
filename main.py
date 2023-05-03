@@ -43,7 +43,7 @@ def FMT_Algorithim(map_matrix,x_start,x_goal):
 
 def BIT_star(map_matrix,x_start,x_goal):
     eta = 200 # control the trade off between exploration and exploitation 
-    iter_max = 1500
+    iter_max = 1800
     bit = BITStar(x_start, x_goal, eta, iter_max,map_matrix)
     path_x,path_y = bit.planning()
     return (path_x,path_y) 
@@ -62,9 +62,9 @@ def main():
     # x_start = (10, 10)  # Starting node
     # x_goal = (10, 140)  # Goal node
 
-    max_c = 0.22  # max curvature (0.22 for FMT and 0.25 BIT and 0.9 or more for Informed)
-    path_x,path_y = FMT_Algorithim(map_matrix,x_start,x_goal)
-    # path_x,path_y = BIT_star(map_matrix,x_start,x_goal)
+    max_c = 0.3  # max curvature (0.22 for FMT and 0.25 BIT and 0.9 or more for Informed)
+    # path_x,path_y = FMT_Algorithim(map_matrix,x_start,x_goal)
+    path_x,path_y = BIT_star(map_matrix,x_start,x_goal)
     # path_x,path_y = Informed_RRT_star(map_matrix,x_start,x_goal) #please go to checker and change step_size to 1.5
     path = Add_theta(path_x,path_y)
     new_path=dupin_smooth(path, max_c,map_matrix)
