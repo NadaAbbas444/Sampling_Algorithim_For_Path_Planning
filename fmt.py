@@ -14,6 +14,9 @@ from scipy.spatial.transform import Rotation as Rot
 import matplotlib.patches as patches
 from scipy import interpolate
 from Availibity_checker import CheckObstacleCollision 
+import matplotlib.pyplot as plt
+from PIL import Image
+
 
 class Node:
     def __init__(self, n):
@@ -47,6 +50,7 @@ class FMT:
         self.V_unvisited.add(self.x_goal)
         self.V_open.add(self.x_init)
 
+
     def Planning(self):
         self.Init()
         z = self.x_init
@@ -54,9 +58,13 @@ class FMT:
         rn = self.search_radius * math.sqrt((math.log(n) / n))
         Visited = []
 
-        # keep track of visited nodes and edges
+        # Keep track of visited nodes and edges
         visited_nodes = set()
         visited_edges = set()
+
+        fig, ax = plt.subplots()
+
+        images = []  # List to store the images for creating the GIF
 
         while z is not self.x_goal:
             V_open_new = set()
@@ -74,7 +82,7 @@ class FMT:
                     self.V_unvisited.remove(x)
                     x.cost = y_min.cost + self.Cost(y_min, x)
 
-                    # add visited edges
+                    # Add visited edges
                     visited_edges.add(((y_min.x, y_min.y), (x.x, x.y)))
 
             self.V_open.update(V_open_new)
@@ -83,22 +91,39 @@ class FMT:
             visited_nodes.add((z.x, z.y))
 
             if not self.V_open:
-                print("open set empty!")
+                print("Open set empty!")
                 break
 
             cost_open = {y: y.cost for y in self.V_open}
             z = min(cost_open, key=cost_open.get)
 
-        # add visited nodes for the goal node
-        visited_nodes.add((self.x_goal.x, self.x_goal.y))
+            # Clear the plot and plot the current state of the tree
+            ax.clear()
+            ax.imshow(np.rot90(np.fliplr(self.map)), cmap='gray')
+            ax.set_title('FMT_Algorithm')
+            ax.set_xlabel('X')
+            ax.set_ylabel('Y')
 
-        # plot the visited nodes and edges
-        for node in visited_nodes:
-            self.ax.plot(node[0], node[1], 'bo')
-        for edge in visited_edges:
-            self.ax.plot([edge[0][0], edge[1][0]], [edge[0][1], edge[1][1]], 'b')
+            # Plot the visited nodes and edges
+            for node in visited_nodes:
+                ax.plot(node[0], node[1], 'bo', color='orange')
+            for edge in visited_edges:
+                ax.plot([edge[0][0], edge[1][0]], [edge[0][1], edge[1][1]], 'b', color='turquoise')
 
-        path_x, path_y = self.ExtractPath()
+            path_x, path_y = self.ExtractPath()
+            ax.plot(path_x, path_y, '-o', color='orange')  # Plot the path
+
+            # Save the current plot as an image
+            fig.canvas.draw()
+            image = Image.frombytes('RGB', fig.canvas.get_width_height(), fig.canvas.tostring_rgb())
+            images.append(image)
+
+            plt.pause(0.1)  # Pause to show the current plot
+
+        # Save the sequence of images as a GIF
+        images[0].save('tree_growth_FMT_map1.gif', save_all=True, append_images=images[1:], duration=200, loop=0)
+
+        plt.show()
 
         path_x = np.array(path_x)
         path_y = np.array(path_y)
@@ -108,7 +133,9 @@ class FMT:
         plt.xlabel('X')
         plt.ylabel('Y')
         plt.show()
-        return (path_x, path_y)
+
+        return path_x, path_y
+
 
 
     def ChooseGoalPoint(self):

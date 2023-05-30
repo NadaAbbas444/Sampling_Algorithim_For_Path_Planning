@@ -26,8 +26,8 @@ def Add_theta(path_x,path_y):
     return path
 def Informed_RRT_star(map_matrix,x_start,x_goal):
     step_len= 1
-    goal_sample_rate=0.1
-    search_radius=20
+    goal_sample_rate=0.5
+    search_radius=60
     iter_max=20000
     rrt_star = IRrtStar(map_matrix,x_start, x_goal, step_len, goal_sample_rate, search_radius, iter_max)
     path_x,path_y= rrt_star.planning()
@@ -49,23 +49,23 @@ def BIT_star(map_matrix,x_start,x_goal):
     return (path_x,path_y) 
 
 def main():
-    # ----------------------------------- map2_Test ---------
-    map_matrix = np.array(np.loadtxt("maps/np_map2_dilated.txt"))
-    x_start = (140, 10)  # Starting node
-    x_goal = (140, 60)  # Goal node
-    # #----------------------------------- map0_Test ---------
+    # # ----------------------------------- map2_Test ---------
     # map_matrix = np.array(np.loadtxt("maps/np_map0_dilated.txt"))
-    # x_start = (80,20)
-    # x_goal = (50,80)
+    # x_start = (140, 10)  # Starting node
+    # x_goal = (140, 60)  # Goal node
+    # #----------------------------------- map0_Test ---------
+    map_matrix = np.array(np.loadtxt("maps/np_map0_dilated.txt"))
+    x_start = (80,20)
+    x_goal = (75,90)
     # #----------------------------------- map1_Test ---------
     # map_matrix = np.array(np.loadtxt("maps/np_map1_dilated.txt"))
-    # x_start = (10, 10)  # Starting node
-    # x_goal = (10, 140)  # Goal node
+    # x_start = (80, 20)  # Starting node
+    # x_goal = (75, 140)  # Goal node
 
     max_c = 0.3  # max curvature (0.22 for FMT and 0.25 BIT and 0.9 or more for Informed)
     # path_x,path_y = FMT_Algorithim(map_matrix,x_start,x_goal)
-    path_x,path_y = BIT_star(map_matrix,x_start,x_goal)
-    # path_x,path_y = Informed_RRT_star(map_matrix,x_start,x_goal) #please go to checker and change step_size to 1.5
+    # path_x,path_y = BIT_star(map_matrix,x_start,x_goal)
+    path_x,path_y = Informed_RRT_star(map_matrix,x_start,x_goal) #please go to checker and change step_size to 1.5
     path = Add_theta(path_x,path_y)
     new_path=dupin_smooth(path, max_c,map_matrix)
 

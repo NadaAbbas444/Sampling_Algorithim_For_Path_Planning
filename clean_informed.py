@@ -17,6 +17,8 @@ from scipy.spatial.transform import Rotation as Rot
 import matplotlib.patches as patches
 from scipy import interpolate
 from Availibity_checker import CheckObstacleCollision , is_valid
+from PIL import Image
+
 
 class Node:
     def __init__(self, n):
@@ -54,53 +56,77 @@ class IRrtStar:
 
         return theta, cMin, xCenter, C, x_best
 
+
     def planning(self):
-      print("I'll be rrunning for 1 and half min...")
-      theta, dist, x_center, C, x_best = self.init()
-      c_best = np.inf
+        print("I'll be running for 1 and a half min...")
+        theta, dist, x_center, C, x_best = self.init()
+        c_best = np.inf
 
-      for k in range(self.iter_max):
-          if self.X_soln:
-              cost = {node: self.Cost(node) for node in self.X_soln}
-              x_best = min(cost, key=cost.get)
-              c_best = cost[x_best]
+        fig, ax = plt.subplots()
+        images = []  # List to store the images
 
-          x_rand = self.Sample(c_best, dist, x_center, C)
-          if not is_valid((x_rand.x, x_rand.y),self.map):
-            continue 
-          x_nearest = self.Nearest(self.V, x_rand)
-          x_new = self.Steer(x_nearest, x_rand)
+        for k in range(self.iter_max):
+            if self.X_soln:
+                cost = {node: self.Cost(node) for node in self.X_soln}
+                x_best = min(cost, key=cost.get)
+                c_best = cost[x_best]
 
-          if x_new and not CheckObstacleCollision((x_nearest.x, x_nearest.y), (x_new.x, x_new.y), self.map) and  is_valid((x_nearest.x, x_nearest.y),self.map) and is_valid((x_new.x, x_new.y),self.map ):
-              X_near = self.Near(self.V, x_new)
-              c_min = self.Cost(x_nearest) + self.Line(x_nearest, x_new)
-              self.V.append(x_new)
-              for x_near in X_near:
+            x_rand = self.Sample(c_best, dist, x_center, C)
+            if not is_valid((x_rand.x, x_rand.y), self.map):
+                continue
+            x_nearest = self.Nearest(self.V, x_rand)
+            x_new = self.Steer(x_nearest, x_rand)
+
+            if x_new and not CheckObstacleCollision((x_nearest.x, x_nearest.y), (x_new.x, x_new.y), self.map) and is_valid(
+                    (x_nearest.x, x_nearest.y), self.map) and is_valid((x_new.x, x_new.y), self.map):
+                X_near = self.Near(self.V, x_new)
+                c_min = self.Cost(x_nearest) + self.Line(x_nearest, x_new)
+                self.V.append(x_new)
+                for x_near in X_near:
                     c_new = self.Cost(x_near) + self.Line(x_near, x_new)
                     if c_new < c_min:
                         x_new.parent = x_near
                         c_min = c_new
 
-              for x_near in X_near:
+                for x_near in X_near:
                     c_near = self.Cost(x_near)
                     c_new = self.Cost(x_new) + self.Line(x_new, x_near)
                     if c_new < c_near:
                         x_near.parent = x_new
 
-              if self.InGoalRegion(x_new):
-                  if not CheckObstacleCollision((x_new.x, x_new.y), (self.x_goal.x, self.x_goal.y), self.map):
-                      self.X_soln.add(x_new)
-              self.edges.append(((x_nearest.x, x_nearest.y), (x_new.x, x_new.y)))
+                if self.InGoalRegion(x_new):
+                    if not CheckObstacleCollision((x_new.x, x_new.y), (self.x_goal.x, self.x_goal.y), self.map):
+                        self.X_soln.add(x_new)
+                self.edges.append(((x_nearest.x, x_nearest.y), (x_new.x, x_new.y)))
 
-      self.path = self.ExtractPath(x_best)
-      plt.imshow(np.rot90(np.fliplr(self.map)), cmap='gray')  
-      plt.title('Infomed_RRT*_20000 iteration_1.5 stepsize_1:48')
-      plt.colorbar()
-      path_x = [vertex[0] for vertex in self.path]
-      path_y = [vertex[1] for vertex in self.path]
-      plt.plot(path_x, path_y, color='red')
-      plt.show()
-      return path_x, path_y
+            self.path = self.ExtractPath(x_best)
+
+            ax.clear()
+            ax.imshow(np.rot90(np.fliplr(self.map)), cmap='gray')
+            ax.set_title('Infomed_RRT*')
+            ax.set_xlabel('X')
+            ax.set_ylabel('Y')
+
+            # Plot the edges
+            for edge in self.edges:
+                ax.plot([edge[0][0], edge[1][0]], [edge[0][1], edge[1][1]], 'b', color='turquoise')
+
+            path_x = [vertex[0] for vertex in self.path]
+            path_y = [vertex[1] for vertex in self.path]
+            ax.plot(path_x, path_y, color='red')  # Plot the path
+
+            fig.canvas.draw()
+            image = Image.frombytes('RGB', fig.canvas.get_width_height(), fig.canvas.tostring_rgb())
+            images.append(image)
+
+            plt.pause(0.1)  # Pause to show the current plot
+
+        # Save the sequence of images as a GIF
+            images[0].save('rrt_planning.gif', save_all=True, append_images=images[1:], duration=500,loop=0)
+
+        plt.show()
+        return path_x, path_y
+
     
     def Steer(self, x_start, x_goal):
         dist, theta = self.get_distance_and_angle(x_start, x_goal)
@@ -220,7 +246,7 @@ def main():
     map_matrix= np.array(map_matrix)
     step_len= 1
     goal_sample_rate=0.1
-    search_radius=20
+    search_radius=40
     iter_max=20000
     rrt_star = IRrtStar(map_matrix,x_start, x_goal, step_len, goal_sample_rate, search_radius, iter_max)
     path= rrt_star.planning()

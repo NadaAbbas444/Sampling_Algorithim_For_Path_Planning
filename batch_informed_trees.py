@@ -15,6 +15,7 @@ import matplotlib.patches as patches
 from scipy.spatial.transform import Rotation as Rot
 from scipy import interpolate
 from Availibity_checker import CheckObstacleCollision , is_valid
+from PIL import Image
 
 
 class Node:
@@ -64,7 +65,11 @@ class BITStar:
 
     def planning(self):
         theta, cMin, xCenter, C = self.init()
-        for k in range( self.iter_max):
+
+        fig, ax = plt.subplots()
+        images = []  # List to store the images for creating the GIF
+
+        for k in range(self.iter_max):
             if not self.Tree.QE and not self.Tree.QV:
                 if k == 0:
                     m = 500
@@ -118,11 +123,31 @@ class BITStar:
             else:
                 self.Tree.QE = set()
                 self.Tree.QV = set()
-        path_x, path_y = self.ExtractPath()
-        plt.plot(path_x, path_y, linewidth=2, color='r')
-        plt.imshow(np.rot90(np.fliplr(self.map)), cmap='gray')  
+
+            path_x, path_y = self.ExtractPath()
+
+            ax.clear()
+            ax.imshow(np.rot90(np.fliplr(self.map)), cmap='gray')
+            ax.set_title('Batch informed Trees')
+            ax.set_xlabel('X')
+            ax.set_ylabel('Y')
+
+            # Plot the visited nodes and edges
+            for node in self.Tree.V:
+                ax.plot(node.x, node.y, 'bo', color='orange')
+            for edge in self.Tree.E:
+                ax.plot([edge[0].x, edge[1].x], [edge[0].y, edge[1].y], 'b', color='turquoise')
+
+            ax.plot(path_x, path_y, linewidth=2, color='r')  # Plot the path
+            fig.canvas.draw()
+            image = Image.frombytes('RGB', fig.canvas.get_width_height(), fig.canvas.tostring_rgb())
+            images.append(image)
+            plt.pause(0.3)  # Pause to show the current plot
+        
+        images[0].save('BIT_map1.gif', save_all=True, append_images=images[1:], duration=200, loop=0)
+
         plt.show()
-        return (path_x, path_y)
+        return path_x, path_y
 
     def ExtractPath(self):
         node = self.x_goal
@@ -132,6 +157,7 @@ class BITStar:
             path_x.append(node.x)
             path_y.append(node.y)
         return path_x, path_y
+
 
     def Prune(self, cBest):
         self.X_sample = {x for x in self.X_sample if self.f_estimated(x) < cBest}
@@ -276,7 +302,7 @@ class BITStar:
         return math.hypot(dx, dy), math.atan2(dy, dx)
 
 def main():
-    map_matrix = np.array(np.loadtxt("maps/np_map2_dilated.txt"))
+    map_matrix = np.array(np.loadtxt("maps/np_map0_dilated.txt"))
     x_start = (140, 10)  # Starting node
     x_goal = (140, 60)  # Goal node
     eta = 20
