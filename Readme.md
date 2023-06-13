@@ -1,4 +1,4 @@
-﻿## Fast Marching Trees(FMT)
+## Fast Marching Trees(FMT)
 
 Parameters:
 
@@ -23,3 +23,11 @@ The algorithm can be summarized as follows:
 ![BIT_map2](GIF/BIT_map2.gif)
 
 ## Comparative Analysis (FMT,BIT,Informed RRTstar)
+
+The three motion planning algorithms, Informed RRT*, Fast Marching Trees (FMT), and Batch Informed Trees (BIT), have different characteristics regarding optimality and speed. Informed RRT* aims for global optimality, while FMT prioritizes speed and efficiency. BIT strikes a balance between optimality and speed by combining aspects of Informed RRT* and FMT.
+
+Informed RRT* is known for its extreme optimality, FMT excels in speed, and BIT offers a compromise between the two. A visual representation, such as a figure illustrating speed and cost metrics on the same map, can demonstrate how Informed RRT* achieves high optimality, FMT prioritizes speed, and BIT provides a desirable compromise for motion planning tasks.
+
+![Combined Image Map 1](Analysis_results/combined_image_map1.jpg)
+![Combined Image Map 2](Analysis_results/combined_image_map2.jpg)
+![Combined Image Map 3](Analysis_results/combined_image_map3.jpg)
